@@ -358,7 +358,7 @@ class Formatter:
     def formatFile(self, filename, start, end):
         # read lines from file
         wlines = rlines = []
-
+        nlines = [] 
         if filename == '-':
             with sys.stdin as f:
                 rlines = f.readlines()[start-1:end]
@@ -369,7 +369,13 @@ class Formatter:
         # take care of empty input
         if not rlines:
             rlines = ['']
-
+            return(rlines)
+        # check for shebang
+        p = r'^#!'
+        m = re.match(p,rlines[0])
+        if m:
+            nlines.append(rlines[0])
+            rlines.pop(0)
         # get initial indent lvl
         p = r'(\s*)(.*)'
         m = re.match(p, rlines[0])
@@ -417,13 +423,14 @@ class Formatter:
 
         # write output
         for line in wlines:
-            print(line)
+            nlines.append(line)
+        return(nlines)
 
 
 def main():
     options = dict(startLine=1, endLine=None, indentWidth=4,
                    separateBlocks=True, indentMode='',
-                   addSpaces='', matrixIndent='')
+                   addSpaces='', matrixIndent='',inplace=False)
 
     indentModes = dict(all_functions=1, only_nested_functions=-1, classic=0)
     operatorSpaces = dict(all_operators=1, exclude_pow=0.5, no_spaces=0)
@@ -458,9 +465,18 @@ def main():
         mode = indentModes.get(options['indentMode'], indentModes['all_functions'])
         opSp = operatorSpaces.get(options['addSpaces'], operatorSpaces['exclude_pow'])
         matInd = matrixIndentation.get(options['matrixIndent'], matrixIndentation['aligned'])
-
+        inplace = options['inplace']
         formatter = Formatter(indent, sep, mode, opSp, matInd)
-        formatter.formatFile(sys.argv[1], start, end)
+        nlines    = formatter.formatFile(sys.argv[1], start, end)
+        if inplace:
+            out  = open(sys.argv[1],'w')
+            for line in nlines:
+                out.write(line)
+                out.write("\n")
+            out.close()
+        else:
+            for line in nlines:
+                print(line)
 
 
 if __name__ == '__main__':
