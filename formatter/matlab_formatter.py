@@ -371,7 +371,7 @@ class Formatter:
             rlines = ['']
             return(rlines)
         # check for shebang
-        p = r'^#!'
+        p = r'#!.+'
         m = re.match(p,rlines[0])
         if m:
             nlines.append(rlines[0])
