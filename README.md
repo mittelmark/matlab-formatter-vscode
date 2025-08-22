@@ -17,3 +17,20 @@ Also usable as standalone without VScode.
 
 ## Additional Options
 * The formatter can be switched off for selected lines by adding the comment `formatter ignore N`. For the next `N` lines, only the indentation will be fixed. Other than that, they will not be altered.
+
+## Standalone Installation
+
+On an Unix  system  the  formatter  can be as well  installed  as a  standalone
+command line application like this:
+
+```
+### Download the script into ~/.local/bin
+curl -fsSL -o ~/.local/bin/matlab-formatter \
+  https://raw.githubusercontent.com/mittelmark/matlab-formatter-vscode/refs/heads/master/formatter/matlab_formatter.py
+
+### Make the script executable
+chmod +x ~/.local/bin/matlab-formatter
+
+#### Verify the installation
+matlab-formatter
+```
